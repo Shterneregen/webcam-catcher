@@ -3,6 +3,10 @@ package webviewer;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -13,6 +17,18 @@ import org.opencv.videoio.Videoio;
 
 public class WebCam {
 
+    static {
+//        try {
+//        System.setProperty("java.library.path", "." + File.pathSeparator + "libs" + File.pathSeparator + "x64");
+//        System.load("./" + File.pathSeparator + "libs" + File.pathSeparator + "x64" + File.pathSeparator + "opencv_java310.dll");
+//        System.load("/libs/x64/opencv_java310.dll");
+//            Field fieldSysPath = ClassLoader.class.getDeclaredField("opencv_java310.dll");
+//            fieldSysPath.setAccessible(true);
+////        fieldSysPath.set(null, null);
+//        } catch (NoSuchFieldException | SecurityException ex) {
+//            Logger.getLogger(WebCam.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+    }
     private static final String FILE_PATH = "D:/Projects/src/test.avi";
     private static final int WIDTH = 1280; // 1366 1280
     private static final int HEIGHT = 720;

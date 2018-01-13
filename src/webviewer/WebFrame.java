@@ -14,12 +14,17 @@ import javax.swing.ImageIcon;
  * @author Yura
  */
 public class WebFrame extends javax.swing.JFrame {
+    
+//    static
+//    {
+//       System.loadLibrary("megalib");
+//    }
 
     public WebFrame(WebCam cam) {
         initComponents();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(640, 480);
-        setResizable(false);
+//        setSize(640, 480);
+//        setResizable(false);
         setLocationRelativeTo(null);
         addWindowListener(new WindowListener() {
             public void windowActivated(WindowEvent event) {
@@ -30,6 +35,7 @@ public class WebFrame extends javax.swing.JFrame {
 
             public void windowClosing(WindowEvent event) {
                 cam.setStop();
+                System.exit(0);
             }
 
             public void windowDeactivated(WindowEvent event) {
