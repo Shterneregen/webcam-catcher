@@ -15,10 +15,13 @@ import javax.swing.ImageIcon;
  */
 public class WebFrame extends javax.swing.JFrame {
 
+    private final int w = 1280;
+    private final int h = 720;
+
     public WebFrame(WebCam cam) {
         initComponents();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1280, 720);
+        setSize(w, h);
 //        setResizable(false);
         setLocationRelativeTo(null);
         addWindowListener(new WindowListener() {
