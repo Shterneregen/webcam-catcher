@@ -16,7 +16,7 @@ import javax.swing.ImageIcon;
 public class WebFrame extends javax.swing.JFrame {
 
     private final int w = 1280;
-    private final int h = 720;
+    private final int h = 1280;
 
     public WebFrame(WebCam cam) {
         initComponents();

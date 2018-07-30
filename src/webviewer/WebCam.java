@@ -16,7 +16,7 @@ public class WebCam {
     }
 
     private static final int WIDTH = 1280; // 1366 1280
-    private static final int HEIGHT = 720;
+    private static final int HEIGHT = 1280;
 
     private VideoCapture camera;
     private VideoWriter writer;
@@ -26,7 +26,7 @@ public class WebCam {
         camera.set(Videoio.CV_CAP_PROP_FRAME_WIDTH, WIDTH);
         camera.set(Videoio.CV_CAP_PROP_FRAME_HEIGHT, HEIGHT);
 
-        System.out.println("WebCam " + camera.isOpened());
+        System.out.println("WebCam is open: " + camera.isOpened());
     }
 
     public void setStop() {
@@ -76,9 +76,9 @@ public class WebCam {
     public void write(String filePath) {
         System.out.println("filePath: " + filePath);
         //<editor-fold defaultstate="collapsed" desc="Возможные значения для VideoWriter.fourcc">
-//        int fourcc = VideoWriter.fourcc('X', 'V', 'I', 'D'); //= кодек XviD
+        int fourcc = VideoWriter.fourcc('X', 'V', 'I', 'D'); //= кодек XviD
 //        int fourcc = VideoWriter.fourcc('P', 'I', 'M', '1'); // = MPEG-1
-        int fourcc = VideoWriter.fourcc('M', 'J', 'P', 'G'); // = motion-jpeg
+//        int fourcc = VideoWriter.fourcc('M', 'J', 'P', 'G'); // = motion-jpeg
 //        int fourcc = VideoWriter.fourcc('M', 'P', '4', '2'); // = MPEG-4.2
 //        int fourcc = VideoWriter.fourcc('D', 'I', 'V', '3'); // = MPEG-4.3
 //        int fourcc = VideoWriter.fourcc('D', 'I', 'V', 'X');// = MPEG-4

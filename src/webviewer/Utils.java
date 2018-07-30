@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
@@ -32,7 +33,7 @@ public class Utils {
     private static final String LIB_NAME_DLL = "opencv_java310.dll";
     private static final String LIB_NAME_JAR = "opencv-310.jar";
 
-    private static String getCurrentDir() {
+    public static String getCurrentDir() {
         // определяем текущий каталог
         File currentDir = new File(".");
         try {
@@ -43,7 +44,7 @@ public class Utils {
         }
     }
 
-    public static boolean copy(String sourceStr, String fileName) throws Exception {
+    public static void copy(String sourceStr, String fileName) throws Exception {
 //        InputStream source = Thread.currentThread().getContextClassLoader().getResourceAsStream(sourceStr);
 //        InputStream source = WebCam.class.getResourceAsStream(sourceStr);
         InputStream source = WebCam.class.getResourceAsStream(sourceStr.replace("\\", "\\\\"));
@@ -51,13 +52,13 @@ public class Utils {
             throw new Exception("Cannot get resource \"" + sourceStr + "\" from Jar file.");
         }
         String destination = getCurrentDir() + fileName;
-
-        boolean succeess = true;
-
-        System.out.println("Copying ->" + sourceStr + "\n\tto ->" + destination);
-//        Files.copy(source, Paths.get(destination));
-        Files.copy(source, Paths.get(destination), StandardCopyOption.REPLACE_EXISTING);
-        return succeess;
+        Path dest = Paths.get(destination);
+        if (Files.exists(dest)) {
+            System.out.println(dest+" exist!");
+        } else {
+            Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Copying ->" + sourceStr + "\n\tto ->" + destination);
+        }
     }
 
     public static void extractLibs() {
