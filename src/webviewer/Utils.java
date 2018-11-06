@@ -29,12 +29,16 @@ import org.opencv.core.Mat;
  */
 public class Utils {
 
-    private static final String S = System.getProperty("file.separator"); // separator
+    private static final String S = System.getProperty("file.separator");
     private static final String LIB_NAME_DLL = "opencv_java310.dll";
     private static final String LIB_NAME_JAR = "opencv-310.jar";
 
+    /**
+     * Возвращает текущий каталог
+     *
+     * @return текущий каталог
+     */
     public static String getCurrentDir() {
-        // определяем текущий каталог
         File currentDir = new File(".");
         try {
             return currentDir.getCanonicalPath() + S;
@@ -44,6 +48,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Копирует ресурсы из jar наружу
+     *
+     * @param sourceStr путь к ресурсу внутри jar
+     * @param fileName путь к ресурсу
+     * @throws Exception
+     */
     public static void copy(String sourceStr, String fileName) throws Exception {
 //        InputStream source = Thread.currentThread().getContextClassLoader().getResourceAsStream(sourceStr);
 //        InputStream source = WebCam.class.getResourceAsStream(sourceStr);
@@ -54,13 +65,16 @@ public class Utils {
         String destination = getCurrentDir() + fileName;
         Path dest = Paths.get(destination);
         if (Files.exists(dest)) {
-            System.out.println(dest+" exist!");
+            System.out.println(dest + " exists!");
         } else {
             Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Copying ->" + sourceStr + "\n\tto ->" + destination);
         }
     }
 
+    /**
+     * Извлекает библиотеки из jar
+     */
     public static void extractLibs() {
 //        String osName = System.getProperty("os.name").toLowerCase();
         String version = System.getProperty("os.arch").toLowerCase();
@@ -76,7 +90,7 @@ public class Utils {
                     ? "Directory is created!"
                     : "Failed to create directory!");
         } else {
-            System.out.println("Directory is exist!");
+            System.out.println("Directory exists!");
         }
 
         try {
@@ -111,16 +125,16 @@ public class Utils {
     /**
      * Подгоняет изображение под размеры
      *
-     * @param im изображение
+     * @param img изображение
      * @param w ширина
      * @param h высота
      * @return изображение с измененными размерами
      */
-    public static BufferedImage change(BufferedImage im, int w, int h) {
-        if (im == null) {
+    public static BufferedImage change(BufferedImage img, int w, int h) {
+        if (img == null) {
             return null;
         }
-        Image image2 = im.getScaledInstance(w, h, Image.SCALE_AREA_AVERAGING);
+        Image image2 = img.getScaledInstance(w, h, Image.SCALE_AREA_AVERAGING);
         BufferedImage changedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = changedImage.createGraphics();
         g2d.drawImage(image2, 0, 0, null);
@@ -128,25 +142,33 @@ public class Utils {
         return changedImage;
     }
 
-    public static BufferedImage scale(BufferedImage src, int w, int h) {
+    /**
+     * Масштабирует изображение при изменении размеров окна
+     *
+     * @param img исходное изображение
+     * @param w ширина окна
+     * @param h высота окна
+     * @return масштабированное изображение
+     */
+    public static BufferedImage scale(BufferedImage img, int w, int h) {
         int type = BufferedImage.TYPE_INT_RGB;
         BufferedImage dst = new BufferedImage(w, h, type);
         Graphics2D g2 = dst.createGraphics();
         // Fill background for scale to fit.
 //        g2.setBackground(UIManager.getColor("Panel.background"));
         g2.clearRect(0, 0, w, h);
-        double xScale = (double) w / src.getWidth();
-        double yScale = (double) h / src.getHeight();
+        double xScale = (double) w / img.getWidth();
+        double yScale = (double) h / img.getHeight();
         // Scaling options:
         // Scale to fit - image just fits in label.
         double scale = Math.min(xScale, yScale);
         // Scale to fill - image just fills label.
         //double scale = Math.max(xScale, yScale);
-        int width = (int) (scale * src.getWidth());
-        int height = (int) (scale * src.getHeight());
+        int width = (int) (scale * img.getWidth());
+        int height = (int) (scale * img.getHeight());
         int x = (w - width) / 2;
         int y = (h - height) / 2;
-        g2.drawImage(src, x, y, width, height, null);
+        g2.drawImage(img, x, y, width, height, null);
         g2.dispose();
         return dst;
     }
