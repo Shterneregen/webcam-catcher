@@ -1,14 +1,5 @@
 package webviewer;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.videoio.VideoCapture;
@@ -17,78 +8,111 @@ import org.opencv.videoio.Videoio;
 
 public class WebCam {
 
-    static {
-//        try {
-//        System.setProperty("java.library.path", "." + File.pathSeparator + "libs" + File.pathSeparator + "x64");
-//        System.load("./" + File.pathSeparator + "libs" + File.pathSeparator + "x64" + File.pathSeparator + "opencv_java310.dll");
-//        System.load("/libs/x64/opencv_java310.dll");
-//            Field fieldSysPath = ClassLoader.class.getDeclaredField("opencv_java310.dll");
-//            fieldSysPath.setAccessible(true);
-////        fieldSysPath.set(null, null);
-//        } catch (NoSuchFieldException | SecurityException ex) {
-//            Logger.getLogger(WebCam.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+    private static WebCam insatance;
+
+    public static synchronized WebCam getInsatance() {
+        insatance = insatance == null ? new WebCam() : insatance;
+        return insatance;
     }
-    private static final String FILE_PATH = "D:/Projects/src/test.avi";
+
     private static final int WIDTH = 1280; // 1366 1280
-    private static final int HEIGHT = 720;
-    private static boolean stop = false;
+    private static final int HEIGHT = 1280;
 
-    public void setStop() {
-        stop = true;
-    }
+    private VideoCapture camera;
+    private VideoWriter writer;
 
-    public static BufferedImage createBufferedImage(Mat mat) {
-        BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
-        WritableRaster raster = image.getRaster();
-        DataBufferByte dataBuffer = (DataBufferByte) raster.getDataBuffer();
-        byte[] data = dataBuffer.getData();
-        mat.get(0, 0, data);
-        return image;
-    }
-
-    public final void start() {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        VideoCapture camera = new VideoCapture(0);
-        WebFrame webFrame = new WebFrame(this);
-        webFrame.setVisible(true);
-
-        //<editor-fold defaultstate="collapsed" desc="Возможные значения для VideoWriter.fourcc">
-//            VideoWriter.fourcc(‘X’,’V’,’I’,’D’) = кодек XviD
-//            VideoWriter.fourcc(‘P’,’I’,’M’,’1′) = MPEG-1
-//            VideoWriter.fourcc(‘M’,’J’,’P’,’G’) = motion-jpeg
-//            VideoWriter.fourcc(‘M’, ‘P’, ‘4’, ‘2’) = MPEG-4.2
-//            VideoWriter.fourcc(‘D’, ‘I’, ‘V’, ‘3’) = MPEG-4.3
-//            VideoWriter.fourcc(‘D’, ‘I’, ‘V’, ‘X’) = MPEG-4
-//            VideoWriter.fourcc(‘U’, ‘2’, ‘6’, ‘3’) = H263
-//            VideoWriter.fourcc(‘I’, ‘2’, ‘6’, ‘3’) = H263I
-//            VideoWriter.fourcc(‘F’, ‘L’, ‘V’, ‘1’) = FLV1
-        //</editor-fold>
-        VideoWriter writer = new VideoWriter(FILE_PATH,
-                VideoWriter.fourcc('D', 'I', 'V', '3'),
-                15,
-                new Size(WIDTH, HEIGHT),
-                true);
+    private WebCam() {
+        camera = new VideoCapture(0);
         camera.set(Videoio.CV_CAP_PROP_FRAME_WIDTH, WIDTH);
         camera.set(Videoio.CV_CAP_PROP_FRAME_HEIGHT, HEIGHT);
 
-        if (!camera.isOpened()) {
-            System.out.println("Error");
-        } else {
-            int index = 0;
-            Mat frame = new Mat();
+        System.out.println("WebCam is open: " + camera.isOpened());
+    }
 
-            while (!stop) {
+    public void setStop() {
+        release();
+    }
+
+    public Mat getImage() {
+//        return getImage(false);
+
+        if (!camera.isOpened()) {
+            System.out.println("Camera is not open");
+        } else {
+            Mat frame = new Mat();
+//            try {
+            if (camera.read(frame)) {
+                return frame;
+            }
+//            } 
+//            finally {
+//                frame.release();
+//            }
+        }
+        return null;
+    }
+
+    public Mat getImage(boolean save) {
+        if (!camera.isOpened()) {
+            System.out.println("Camera is not open");
+        } else {
+            Mat frame = new Mat();
+            try {
                 if (camera.read(frame)) {
-                    writer.write(frame);
-                    BufferedImage image = createBufferedImage(frame);
-                    webFrame.setLb(new ImageIcon(image));
-                    index++;
+                    if (save) {
+                        writer.write(frame);
+                    }
+//                    return new ImageIcon(Utils.createBufferedImage(frame));
+                    System.out.println(frame.width() + " " + frame.height());
+                    return frame;
                 }
+            } finally {
                 frame.release();
             }
         }
-        writer.release();
-        camera.release();
+        return null;
     }
+
+    public void write(String filePath) {
+        System.out.println("filePath: " + filePath);
+        //<editor-fold defaultstate="collapsed" desc="Возможные значения для VideoWriter.fourcc">
+        int fourcc = VideoWriter.fourcc('X', 'V', 'I', 'D'); //= кодек XviD
+//        int fourcc = VideoWriter.fourcc('P', 'I', 'M', '1'); // = MPEG-1
+//        int fourcc = VideoWriter.fourcc('M', 'J', 'P', 'G'); // = motion-jpeg
+//        int fourcc = VideoWriter.fourcc('M', 'P', '4', '2'); // = MPEG-4.2
+//        int fourcc = VideoWriter.fourcc('D', 'I', 'V', '3'); // = MPEG-4.3
+//        int fourcc = VideoWriter.fourcc('D', 'I', 'V', 'X');// = MPEG-4
+//        int fourcc = VideoWriter.fourcc('U', '2', '6', '3'); // = H263
+//        int fourcc = VideoWriter.fourcc('U', '2', '6', '4'); // = H264
+//        int fourcc = VideoWriter.fourcc('U', '2', '6', '3'); // = H263
+//        int fourcc = VideoWriter.fourcc('I', '2', '6', '3'); // = H263I
+//        int fourcc = VideoWriter.fourcc('F', 'L', 'V', '1'); //= FLV1
+        //</editor-fold>
+
+//Size frameSize = new Size((int) videoCapture.get(Videoio.CAP_PROP_FRAME_WIDTH),(int) videoCapture.get(Videoio.CAP_PROP_FRAME_HEIGHT));
+//        Mat fr = new Mat(HEIGHT, WIDTH, CvType.CV_8UC3, Scalar.all(127));
+        int fps = 15;
+        writer = new VideoWriter(filePath,
+                fourcc,
+                fps,
+                new Size(WIDTH, HEIGHT),
+                true);
+
+//        while (true) {
+        for (int i = 0; i < 30; i++) {
+            getImage(true);
+        }
+
+    }
+
+    public void release() {
+        if (writer != null) {
+            writer.release();
+        }
+        if (camera != null) {
+            camera.release();
+        }
+        System.out.println("WebCam release");
+    }
+
 }

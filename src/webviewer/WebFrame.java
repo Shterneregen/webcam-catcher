@@ -14,16 +14,14 @@ import javax.swing.ImageIcon;
  * @author Yura
  */
 public class WebFrame extends javax.swing.JFrame {
-    
-//    static
-//    {
-//       System.loadLibrary("megalib");
-//    }
+
+    private final int w = 1280;
+    private final int h = 1280;
 
     public WebFrame(WebCam cam) {
         initComponents();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-//        setSize(640, 480);
+        setSize(w, h);
 //        setResizable(false);
         setLocationRelativeTo(null);
         addWindowListener(new WindowListener() {
