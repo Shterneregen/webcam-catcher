@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import org.opencv.core.Mat;
+import webviewer.util.ImgUtils;
+import webviewer.util.ResUtils;
 
 /**
  *
@@ -16,11 +18,10 @@ import org.opencv.core.Mat;
  */
 public class WebViewer {
 
-//    private static String FILE_PATH = "D:/";
 //    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
     public static void main(String args[]) throws InterruptedException {
         // Вытаскиваем либы из jar
-        Utils.extractLibs();
+        ResUtils.extractLibs();
 
         WebCam cam = WebCam.getInsatance();
 
@@ -29,7 +30,7 @@ public class WebViewer {
             if (mode.equals("-r")) {
                 String filePath = args.length > 1
                         ? args[1]
-                        : Utils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_cam.avi", new Date());
+                        : ResUtils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_cam.avi", new Date());
                 System.out.println(filePath);
                 save(cam, filePath);
             }
@@ -50,12 +51,12 @@ public class WebViewer {
                 if (frame.width() <= 0 || frame.height() <= 0) {
                     continue;
                 }
-                BufferedImage image = Utils.createBufferedImage(frame);
+                BufferedImage image = ImgUtils.createBufferedImage(frame);
 
                 int w = webFrame.getWidth();
                 int h = webFrame.getHeight();
 
-                webFrame.setLb(new ImageIcon(Utils.scale(image, w, h - 100)));
+                webFrame.setLb(new ImageIcon(ImgUtils.scale(image, w, h - 100)));
             }
         } finally {
             cam.release();

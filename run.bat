@@ -1,2 +1,2 @@
-java -jar dist/WebViewer.jar
+java -jar WebViewer.jar
 pause

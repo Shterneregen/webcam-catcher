@@ -10,16 +10,18 @@ public class WebCam {
 
     private static WebCam insatance;
 
-    public static synchronized WebCam getInsatance() {
-        insatance = insatance == null ? new WebCam() : insatance;
-        return insatance;
-    }
-
     private static final int WIDTH = 1280; // 1366 1280
     private static final int HEIGHT = 1280;
 
     private VideoCapture camera;
     private VideoWriter writer;
+
+    public static synchronized WebCam getInsatance() {
+        if (insatance == null) {
+            insatance = new WebCam();
+        }
+        return insatance;
+    }
 
     private WebCam() {
         camera = new VideoCapture(0);
@@ -75,31 +77,18 @@ public class WebCam {
 
     public void write(String filePath) {
         System.out.println("filePath: " + filePath);
-        //<editor-fold defaultstate="collapsed" desc="Возможные значения для VideoWriter.fourcc">
-        int fourcc = VideoWriter.fourcc('X', 'V', 'I', 'D'); //= кодек XviD
-//        int fourcc = VideoWriter.fourcc('P', 'I', 'M', '1'); // = MPEG-1
-//        int fourcc = VideoWriter.fourcc('M', 'J', 'P', 'G'); // = motion-jpeg
-//        int fourcc = VideoWriter.fourcc('M', 'P', '4', '2'); // = MPEG-4.2
-//        int fourcc = VideoWriter.fourcc('D', 'I', 'V', '3'); // = MPEG-4.3
-//        int fourcc = VideoWriter.fourcc('D', 'I', 'V', 'X');// = MPEG-4
-//        int fourcc = VideoWriter.fourcc('U', '2', '6', '3'); // = H263
-//        int fourcc = VideoWriter.fourcc('U', '2', '6', '4'); // = H264
-//        int fourcc = VideoWriter.fourcc('U', '2', '6', '3'); // = H263
-//        int fourcc = VideoWriter.fourcc('I', '2', '6', '3'); // = H263I
-//        int fourcc = VideoWriter.fourcc('F', 'L', 'V', '1'); //= FLV1
-        //</editor-fold>
 
 //Size frameSize = new Size((int) videoCapture.get(Videoio.CAP_PROP_FRAME_WIDTH),(int) videoCapture.get(Videoio.CAP_PROP_FRAME_HEIGHT));
 //        Mat fr = new Mat(HEIGHT, WIDTH, CvType.CV_8UC3, Scalar.all(127));
         int fps = 15;
         writer = new VideoWriter(filePath,
-                fourcc,
+                Codec.XVID,
                 fps,
                 new Size(WIDTH, HEIGHT),
                 true);
 
 //        while (true) {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             getImage(true);
         }
 
