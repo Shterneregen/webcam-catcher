@@ -10,4 +10,9 @@ nb-configuration.xml
 .nb-gradle/
 lib/
 
-test/
+# test/
+
+*.jar
+*.avi
+*.jpg
+test/*.properties

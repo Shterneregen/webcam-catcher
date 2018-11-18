@@ -8,7 +8,6 @@ package webviewer;
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import javax.swing.ImageIcon;
-import org.opencv.core.Mat;
 import webviewer.util.ImgUtils;
 import webviewer.util.ResUtils;
 
@@ -28,46 +27,39 @@ public class WebViewer {
         if (args.length > 0) {
             String mode = args[0];
             if (mode.equals("-r")) {
+                int sec = args.length > 1 ? Integer.parseInt(args[1]) : 10;
+                String filePath = args.length > 2
+                        ? args[2]
+                        : ResUtils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_cam.avi", new Date());
+                System.out.println("Path: " + filePath);
+                System.out.println("Seconds: " + sec);
+                cam.write(filePath, sec);
+            } else if (mode.equals("-sh")) {
+                show(cam);
+            } else if (mode.equals("-cap")) {
                 String filePath = args.length > 1
                         ? args[1]
-                        : ResUtils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_cam.avi", new Date());
-                System.out.println(filePath);
-                save(cam, filePath);
+                        : ResUtils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS.jpg", new Date());
+                cam.cap(filePath);
             }
         } else {
-            WebFrame webFrame = new WebFrame(cam);
-            webFrame.setVisible(true);
-            show(cam, webFrame);
+            show(cam);
         }
     }
 
-    private static void show(WebCam cam, WebFrame webFrame) {
-        try {
-            while (true) {
-                Mat frame = cam.getImage();
-                if (frame == null) {
-                    break;
-                }
-                if (frame.width() <= 0 || frame.height() <= 0) {
-                    continue;
-                }
-                BufferedImage image = ImgUtils.createBufferedImage(frame);
+    private static void show(WebCam cam) {
+        WebFrame webFrame = new WebFrame(cam);
+        webFrame.setVisible(true);
 
-                int w = webFrame.getWidth();
-                int h = webFrame.getHeight();
-
+        while (true) {
+            int w = webFrame.getWidth();
+            int h = webFrame.getHeight();
+            BufferedImage image = cam.show();
+            if (w > 0 && h > 0 && image != null) {
                 webFrame.setLb(new ImageIcon(ImgUtils.scale(image, w, h - 100)));
             }
-        } finally {
-            cam.release();
         }
+
     }
 
-    private static void save(WebCam cam, String filePath) {
-        try {
-            cam.write(filePath);
-        } finally {
-            cam.release();
-        }
-    }
 }

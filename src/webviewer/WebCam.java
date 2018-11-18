@@ -1,10 +1,15 @@
 package webviewer;
 
+import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
+import webviewer.util.ImgUtils;
 
 public class WebCam {
 
@@ -14,7 +19,6 @@ public class WebCam {
     private static final int HEIGHT = 1280;
 
     private VideoCapture camera;
-    private VideoWriter writer;
 
     public static synchronized WebCam getInsatance() {
         if (insatance == null) {
@@ -35,69 +39,98 @@ public class WebCam {
         release();
     }
 
-    public Mat getImage() {
-//        return getImage(false);
+    public VideoWriter initWriter(String filePath) {
+        Size frameSize = new Size(
+                (int) camera.get(Videoio.CAP_PROP_FRAME_WIDTH),
+                (int) camera.get(Videoio.CAP_PROP_FRAME_HEIGHT)
+        );
+        int fps = 20;
+        VideoWriter writer = new VideoWriter(
+                filePath,
+                Codec.MOTIONJPEG,
+                fps,
+                frameSize,
+                true
+        );
+        return writer;
+    }
 
+    public Mat getImage() {
         if (!camera.isOpened()) {
-            System.out.println("Camera is not open");
+            System.out.println("Camera is not open!");
         } else {
             Mat frame = new Mat();
-//            try {
             if (camera.read(frame)) {
                 return frame;
             }
-//            } 
-//            finally {
-//                frame.release();
-//            }
         }
         return null;
     }
 
-    public Mat getImage(boolean save) {
-        if (!camera.isOpened()) {
-            System.out.println("Camera is not open");
-        } else {
-            Mat frame = new Mat();
-            try {
-                if (camera.read(frame)) {
-                    if (save) {
-                        writer.write(frame);
-                    }
-//                    return new ImageIcon(Utils.createBufferedImage(frame));
-                    System.out.println(frame.width() + " " + frame.height());
-                    return frame;
+    public void write(String filePath, int sec) {
+        VideoWriter writer = null;
+        try {
+            writer = initWriter(filePath);
+            int i = 0;
+            while (i < sec) {
+                Mat frame = this.getImage();
+                if (frame == null) {
+                    break;
                 }
-            } finally {
+                if (frame.width() <= 0 || frame.height() <= 0) {
+                    continue;
+                }
+                writer.write(frame);
                 frame.release();
+                try {
+                    Thread.currentThread().sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(WebCam.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                i++;
+            }
+        } finally {
+            if (writer != null) {
+                writer.release();
+            }
+            this.release();
+        }
+    }
+
+    public BufferedImage show() {
+        try {
+            Mat frame = this.getImage();
+            BufferedImage image = ImgUtils.createBufferedImage(frame);
+            return image;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void cap(String path) {
+        Mat mat = null;
+        try {
+            int i = 0;
+            while (i < 4) {
+                mat = this.getImage();
+                System.out.println("cap " + i);
+                if (mat != null && !mat.empty()) {
+//                    System.out.println("write cap " + mat.elemSize());
+                    Imgcodecs.imwrite(path, mat);
+//                    break;
+                }
+                i++;
+            }
+        } catch (Exception e) {
+        } finally {
+            this.release();
+            if (mat != null) {
+                mat.release();
             }
         }
-        return null;
-    }
-
-    public void write(String filePath) {
-        System.out.println("filePath: " + filePath);
-
-//Size frameSize = new Size((int) videoCapture.get(Videoio.CAP_PROP_FRAME_WIDTH),(int) videoCapture.get(Videoio.CAP_PROP_FRAME_HEIGHT));
-//        Mat fr = new Mat(HEIGHT, WIDTH, CvType.CV_8UC3, Scalar.all(127));
-        int fps = 15;
-        writer = new VideoWriter(filePath,
-                Codec.XVID,
-                fps,
-                new Size(WIDTH, HEIGHT),
-                true);
-
-//        while (true) {
-        for (int i = 0; i < 10; i++) {
-            getImage(true);
-        }
-
     }
 
     public void release() {
-        if (writer != null) {
-            writer.release();
-        }
         if (camera != null) {
             camera.release();
         }
