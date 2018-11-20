@@ -25,11 +25,11 @@ import webviewer.WebCam;
 public class ResUtils {
 
     private static final String S = System.getProperty("file.separator");
-//    private static final String LIB_NAME_DLL = "opencv_java310.dll";
-//    private static final String LIB_NAME_JAR = "opencv-310.jar";
     private static final String CONFIG_FILE = "config.properties";
     private static final String LIB_NAME_DLL = "opencvDll";
     private static final String LIB_NAME_JAR = "opencvJar";
+
+    private static Properties properties;
 
 //    public static ResUtils instance;
 //
@@ -42,7 +42,6 @@ public class ResUtils {
 //        }
 //        return instance;
 //    }
-
     /**
      * Возвращает текущий каталог
      *
@@ -110,7 +109,7 @@ public class ResUtils {
             copy(configPath, CONFIG_FILE);
 
             InputStream inputStream = new FileInputStream(CONFIG_FILE);
-            Properties properties = new Properties();
+            properties = new Properties();
             properties.load(inputStream);
             String dll = properties.getProperty(LIB_NAME_DLL);
             String jar = properties.getProperty(LIB_NAME_JAR);
@@ -128,5 +127,9 @@ public class ResUtils {
         }
 //        System.setProperty("java.library.path", libPath + ";" + System.getProperty("java.library.path"));
 //        System.loadLibrary(LIB_NAME); // Необходимо название либы
+    }
+
+    public static String getProperty(String str) {
+        return properties.getProperty(str);
     }
 }

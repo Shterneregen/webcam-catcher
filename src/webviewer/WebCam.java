@@ -1,8 +1,8 @@
 package webviewer;
 
+import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.Timer;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -10,6 +10,7 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
 import webviewer.util.ImgUtils;
+import webviewer.util.ResUtils;
 
 public class WebCam {
 
@@ -44,7 +45,9 @@ public class WebCam {
                 (int) camera.get(Videoio.CAP_PROP_FRAME_WIDTH),
                 (int) camera.get(Videoio.CAP_PROP_FRAME_HEIGHT)
         );
-        int fps = 20;
+        int fps = Integer.parseInt(ResUtils.getProperty("fps"));
+//        int fps = Videoio.CAP_PROP_FPS;
+        System.out.println("fps = " + fps);
         VideoWriter writer = new VideoWriter(
                 filePath,
                 Codec.MOTIONJPEG,
@@ -82,11 +85,11 @@ public class WebCam {
                 }
                 writer.write(frame);
                 frame.release();
-                try {
-                    Thread.currentThread().sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(WebCam.class.getName()).log(Level.SEVERE, null, ex);
-                }
+//                try {
+//                    Thread.currentThread().sleep(1000);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(WebCam.class.getName()).log(Level.SEVERE, null, ex);
+//                }
                 i++;
             }
         } finally {
@@ -128,6 +131,28 @@ public class WebCam {
                 mat.release();
             }
         }
+    }
+
+    static Timer tmrVideoProcess;
+
+    public void stream() {
+//        VideoCapture videoCapture = new VideoCapture();
+//        videoCapture.open(0);
+        if (!camera.isOpened()) {
+            return;
+        }
+
+        Mat frame = new Mat();
+        HttpStreamServer httpStreamService = new HttpStreamServer(frame);
+        new Thread(httpStreamService).start();
+
+        tmrVideoProcess = new Timer(100, (ActionEvent e) -> {
+            if (!camera.read(frame)) {
+                tmrVideoProcess.stop();
+            }
+            httpStreamService.imag = frame;
+        });
+        tmrVideoProcess.start();
     }
 
     public void release() {

@@ -27,7 +27,9 @@ public class WebViewer {
         if (args.length > 0) {
             String mode = args[0];
             if (mode.equals("-r")) {
-                int sec = args.length > 1 ? Integer.parseInt(args[1]) : 10;
+                int sec = args.length > 1
+                        ? Integer.parseInt(args[1])
+                        : Integer.parseInt(ResUtils.getProperty("def.rec.seconds"));
                 String filePath = args.length > 2
                         ? args[2]
                         : ResUtils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_cam.avi", new Date());
@@ -41,6 +43,8 @@ public class WebViewer {
                         ? args[1]
                         : ResUtils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS.jpg", new Date());
                 cam.cap(filePath);
+            } else if (mode.equals("-stream")) {
+                cam.stream();
             }
         } else {
             show(cam);
