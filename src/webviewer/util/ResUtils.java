@@ -18,10 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import webviewer.WebCam;
 
-/**
- *
- * @author Worker
- */
 public class ResUtils {
 
     private static final String S = System.getProperty("file.separator");
@@ -31,17 +27,6 @@ public class ResUtils {
 
     private static Properties properties;
 
-//    public static ResUtils instance;
-//
-//    private ResUtils() {
-//    }
-//
-//    public static ResUtils getInstance() {
-//        if (instance == null) {
-//            instance = new ResUtils();
-//        }
-//        return instance;
-//    }
     /**
      * Возвращает текущий каталог
      *
@@ -87,7 +72,7 @@ public class ResUtils {
      */
     public static void extractLibs() {
         String version = System.getProperty("os.arch").toLowerCase();
-        String dllFolder = version.contains("64") ? "x64" : "x32";
+        String dllFolder = version.contains("64") ? "x64" : "x86";
 
         String libDir = "lib" + S + dllFolder + S;
         String dirPath = getCurrentDir() + libDir;

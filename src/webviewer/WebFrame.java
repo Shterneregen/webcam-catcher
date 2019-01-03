@@ -9,10 +9,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.ImageIcon;
 
-/**
- *
- * @author Yura
- */
 public class WebFrame extends javax.swing.JFrame {
 
     private final int w = 1280;

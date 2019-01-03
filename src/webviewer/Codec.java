@@ -7,10 +7,6 @@ package webviewer;
 
 import org.opencv.videoio.VideoWriter;
 
-/**
- *
- * @author Worker
- */
 public class Codec {
 
     public static int XVID = VideoWriter.fourcc('X', 'V', 'I', 'D'); //= кодек XviD

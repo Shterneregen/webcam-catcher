@@ -11,10 +11,6 @@ import javax.swing.ImageIcon;
 import webviewer.util.ImgUtils;
 import webviewer.util.ResUtils;
 
-/**
- *
- * @author Yura
- */
 public class WebViewer {
 
 //    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");

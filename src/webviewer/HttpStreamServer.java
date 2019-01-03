@@ -15,10 +15,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import webviewer.util.ResUtils;
 
-/**
- *
- * @author Worker
- */
 public class HttpStreamServer implements Runnable {
 
     private BufferedImage img = null;
