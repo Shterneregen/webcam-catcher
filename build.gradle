@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+mainClassName = 'webviewer.WebViewer'
+
+repositories {
+    mavenCentral()
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+dependencies {
+    compile group: 'org.openpnp', name: 'opencv', version: '3.2.0-0'
+}
+
+jar {
+    baseName = 'WebViewer'
+    manifest {
+        attributes(
+                'Class-Path': configurations.compileClasspath.files.collect { "$it.name" }.join(' '),
+                'Main-Class': 'webviewer.WebViewer'
+        )
+    }
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

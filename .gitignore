@@ -10,7 +10,17 @@ nb-configuration.xml
 .nb-gradle/
 lib/
 
-# test/
+# Gradle
+.gradle
+.nb-gradle/
+out/
+.gradle/
+
+# IntelliJ project files
+*.iml
+*.iws
+*.ipr
+.idea/
 
 *.jar
 *.avi
