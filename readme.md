@@ -1,18 +1,19 @@
-## WebViewer
+# WebViewer
+Work with OpenCV
 
-* Вывод изображение камеры на JFrame
+* Display images from a webcam on JFrame
 ```
 java -jar WebViewer.jar
 ```
-* Запись видео в файл
+* Record video to file
 ```
 java -jar WebViewer.jar -r
 ```
-* Сохранение фото с камеры
+* Saving photos from the camera
 ```
 java -jar WebViewer.jar -cap
 ```
-* Стриминг на localhost
+* Streaming to localhost
 ```
 java -jar WebViewer.jar -stream
 ```
