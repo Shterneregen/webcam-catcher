@@ -9,25 +9,27 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import webviewer.util.ResUtils;
 
 public class HttpStreamServer implements Runnable {
 
-    private BufferedImage img = null;
+    private static final Logger LOG = Logger.getLogger(HttpStreamServer.class.getName());
+
     private ServerSocket serverSocket;
     private Socket socket;
     private final String boundary = "stream";
-    private OutputStream outputStream;
-    Mat imag;
+    Mat frame;
     private int port;
 
-    public HttpStreamServer(Mat imagFr) {
-        this.imag = imagFr;
+    public HttpStreamServer(Mat frame) {
+        this.frame = frame;
         this.port = Integer.parseInt(ResUtils.getProperty("stream.port"));
     }
 
-    public void startStreamingServer() throws IOException {
+    private void startStreamingServer() throws IOException {
         serverSocket = new ServerSocket(port);
         socket = serverSocket.accept();
         writeHeader(socket.getOutputStream(), boundary);
@@ -51,8 +53,8 @@ public class HttpStreamServer implements Runnable {
             return;
         }
         try {
-            outputStream = socket.getOutputStream();
-            BufferedImage img = Mat2bufferedImage(frame);
+            OutputStream outputStream = socket.getOutputStream();
+            BufferedImage img = mat2bufferedImage(frame);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(img, "jpg", baos);
             byte[] imageBytes = baos.toByteArray();
@@ -69,14 +71,13 @@ public class HttpStreamServer implements Runnable {
 
     public void run() {
         try {
-            System.out.print("go to  http://localhost:" + port + " with browser");
+            LOG.log(Level.INFO, "Go to  http://localhost:{0} with browser", port);
             startStreamingServer();
-
             while (true) {
-                pushImage(imag);
+                pushImage(frame);
             }
         } catch (IOException e) {
-            return;
+            LOG.log(Level.SEVERE, e.getMessage(), e);
         }
 
     }
@@ -86,13 +87,15 @@ public class HttpStreamServer implements Runnable {
         serverSocket.close();
     }
 
-    public static BufferedImage Mat2bufferedImage(Mat image) throws IOException {
+    private static BufferedImage mat2bufferedImage(Mat image) throws IOException {
         MatOfByte bytemat = new MatOfByte();
         Imgcodecs.imencode(".jpg", image, bytemat);
         byte[] bytes = bytemat.toArray();
         InputStream in = new ByteArrayInputStream(bytes);
-        BufferedImage img = null;
-        img = ImageIO.read(in);
-        return img;
+        return ImageIO.read(in);
+    }
+
+    public void setFrame(Mat frame) {
+        this.frame = frame;
     }
 }

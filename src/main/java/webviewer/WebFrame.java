@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package webviewer;
 
 import java.awt.event.WindowEvent;
@@ -18,7 +13,6 @@ public class WebFrame extends javax.swing.JFrame {
         initComponents();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(w, h);
-//        setResizable(false);
         setLocationRelativeTo(null);
         addWindowListener(new WindowListener() {
             public void windowActivated(WindowEvent event) {

@@ -22,6 +22,9 @@ public class ResUtils {
 
     private static Properties properties;
 
+    private ResUtils() {
+    }
+
     /**
      * Возвращает текущий каталог
      *
@@ -38,10 +41,10 @@ public class ResUtils {
     }
 
     /**
-     * Копирует ресурсы из jar наружу
+     * Copy resources from jar to the outside
      *
-     * @param sourceStr путь к ресурсу внутри jar
-     * @param fileName  путь к ресурсу
+     * @param sourceStr resource path inside the jar
+     * @param fileName  resource path
      * @throws Exception
      */
     public static void copy(String sourceStr, String fileName) throws Exception {
@@ -62,7 +65,7 @@ public class ResUtils {
     }
 
     /**
-     * Извлекает библиотеки из jar
+     * Extract libraries from jar
      */
     public static void extractLibs() {
         String version = System.getProperty("os.arch").toLowerCase();
@@ -85,9 +88,11 @@ public class ResUtils {
             String configPath = "/" + CONFIG_FILE;
             copy(configPath, CONFIG_FILE);
 
-            InputStream inputStream = new FileInputStream(CONFIG_FILE);
             properties = new Properties();
-            properties.load(inputStream);
+            try(InputStream inputStream = new FileInputStream(CONFIG_FILE)) {
+                properties.load(inputStream);
+            }
+
             String dll = properties.getProperty(LIB_NAME_DLL);
             String libPath = "/nu/pattern/opencv/windows/" + dllFolder + "/" + dll;
             copy(libPath, "lib/" + dllFolder + "/" + dll);

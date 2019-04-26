@@ -10,6 +10,9 @@ import org.opencv.core.Mat;
 
 public class ImgUtils {
 
+    private ImgUtils() {
+    }
+
     public static BufferedImage createBufferedImage(Mat mat) {
         BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
         WritableRaster raster = image.getRaster();
