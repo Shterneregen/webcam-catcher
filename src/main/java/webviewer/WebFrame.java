@@ -1,74 +1,54 @@
 package webviewer;
 
+import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import javax.swing.ImageIcon;
 
-public class WebFrame extends javax.swing.JFrame {
+public class WebFrame extends JFrame {
 
-    private final int w = 1280;
-    private final int h = 1280;
+    private static final int DEFAULT_WIDTH = 1280;
+    private static final int DEFAULT_HEIGHT = 1280;
 
-    public WebFrame(WebCam cam) {
-        initComponents();
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(w, h);
+    private JLabel camLabel;
+
+    private WebCam cam;
+
+    WebFrame(WebCam cam) {
+        this.cam = cam;
+        camLabel = new JLabel();
+        this.add(camLabel);
+        addWindowListener(windowListener);
+        setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setLocationRelativeTo(null);
-        addWindowListener(new WindowListener() {
-            public void windowActivated(WindowEvent event) {
-            }
-
-            public void windowClosed(WindowEvent event) {
-            }
-
-            public void windowClosing(WindowEvent event) {
-                cam.setStop();
-                System.exit(0);
-            }
-
-            public void windowDeactivated(WindowEvent event) {
-            }
-
-            public void windowDeiconified(WindowEvent event) {
-            }
-
-            public void windowIconified(WindowEvent event) {
-            }
-
-            public void windowOpened(WindowEvent event) {
-            }
-        });
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    public void setLb(ImageIcon image) {
-        lb.setIcon(image);
+    private WindowListener windowListener = new WindowListener() {
+        public void windowActivated(WindowEvent event) {
+        }
+
+        public void windowClosed(WindowEvent event) {
+        }
+
+        public void windowClosing(WindowEvent event) {
+            cam.setStop();
+            System.exit(0);
+        }
+
+        public void windowDeactivated(WindowEvent event) {
+        }
+
+        public void windowDeiconified(WindowEvent event) {
+        }
+
+        public void windowIconified(WindowEvent event) {
+        }
+
+        public void windowOpened(WindowEvent event) {
+        }
+    };
+
+    public void setCamLabelImage(ImageIcon image) {
+        camLabel.setIcon(image);
     }
-
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        lb = new javax.swing.JLabel();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        lb.setText(" ");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lb, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lb, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lb;
-    // End of variables declaration//GEN-END:variables
 }

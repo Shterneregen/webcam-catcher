@@ -62,14 +62,13 @@ public class WebViewer {
         webFrame.setVisible(true);
 
         while (true) {
-            int w = webFrame.getWidth();
-            int h = webFrame.getHeight();
+            int width = webFrame.getWidth();
+            int height = webFrame.getHeight();
             BufferedImage image = cam.show();
-            if (w > 0 && h > 0 && image != null) {
-                webFrame.setLb(new ImageIcon(ImgUtils.scale(image, w, h - 100)));
+            if (width > 0 && height > 0 && image != null) {
+                webFrame.setCamLabelImage(new ImageIcon(ImgUtils.scale(image, width, height - 100)));
             }
         }
-
     }
 
 }
