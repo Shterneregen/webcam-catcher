@@ -13,10 +13,6 @@ dependencies {
     )
 }
 
-application {
-    mainClassName = 'WebViewer.App'
-}
-
 jar {
     archiveFileName = 'WebViewer.jar'
     manifest {

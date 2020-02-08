@@ -9,3 +9,5 @@ build
 *.avi
 *.jpg
 test/*.properties
+/lib/
+/config.properties
