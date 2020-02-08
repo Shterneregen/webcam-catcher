@@ -3,25 +3,26 @@ package webviewer;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
+import webviewer.util.ResUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import webviewer.util.ResUtils;
-
 public class HttpStreamServer implements Runnable {
 
-    private static final Logger LOG = Logger.getLogger(HttpStreamServer.class.getName());
+    private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
+
+    private final String boundary = "stream";
 
     private ServerSocket serverSocket;
     private Socket socket;
-    private final String boundary = "stream";
-    Mat frame;
+    private Mat frame;
     private int port;
 
     public HttpStreamServer(Mat frame) {
@@ -71,7 +72,7 @@ public class HttpStreamServer implements Runnable {
 
     public void run() {
         try {
-            LOG.log(Level.INFO, "Go to  http://localhost:{0} with browser", port);
+            LOG.log(Level.INFO, "Go to  http://localhost:{0} with browser", Integer.toString(port));
             startStreamingServer();
             while (true) {
                 pushImage(frame);

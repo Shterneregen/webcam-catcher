@@ -20,27 +20,27 @@ public class WebViewer {
         OpenCV.loadLocally();
 
         WebCam cam = WebCam.getInstance();
-
-        if (args.length > 0) {
-            int index = 0;
-            String mode = args[index++];
-            String[] params = Arrays.copyOfRange(args, index, args.length);
-
-            if (mode.equals("-r")) {
-                record(params, cam);
-            } else if (mode.equals("-sh")) {
-                show(cam);
-            } else if (mode.equals("-cap")) {
-                photograph(params, cam);
-            } else if (mode.equals("-stream")) {
-                cam.stream();
-            }
-        } else {
+        if (args.length <= 0) {
             show(cam);
+            return;
+        }
+
+        int index = 0;
+        String mode = args[index++];
+        String[] params = Arrays.copyOfRange(args, index, args.length);
+
+        if (mode.equals("-r")) {
+            recordVideo(params, cam);
+        } else if (mode.equals("-sh")) {
+            show(cam);
+        } else if (mode.equals("-cap")) {
+            photograph(params, cam);
+        } else if (mode.equals("-stream")) {
+            cam.stream();
         }
     }
 
-    private static void record(String[] args, WebCam cam) {
+    private static void recordVideo(String[] args, WebCam cam) {
         int sec = args.length > 1
                 ? Integer.parseInt(args[1])
                 : Integer.parseInt(ResUtils.getProperty("def.rec.seconds"));

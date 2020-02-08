@@ -1,11 +1,5 @@
 package webviewer;
 
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.Timer;
-
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -15,9 +9,17 @@ import org.opencv.videoio.Videoio;
 import webviewer.util.ImgUtils;
 import webviewer.util.ResUtils;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.lang.invoke.MethodHandles;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class WebCam {
 
-    private static final Logger LOG = Logger.getLogger(WebCam.class.getName());
+    private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
     private static WebCam instance;
 
@@ -100,7 +102,7 @@ public class WebCam {
     public BufferedImage show() {
         try {
             Mat frame = this.getImage();
-            return ImgUtils.createBufferedImage(frame);
+            return ImgUtils.createBufferedImage(Objects.requireNonNull(frame));
         } catch (Exception e) {
             return null;
         }
