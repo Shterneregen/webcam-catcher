@@ -1,21 +1,23 @@
 package webviewer;
 
+import nu.pattern.OpenCV;
+import webviewer.util.ImgUtils;
+import webviewer.util.ResUtils;
+
+import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-
-import webviewer.util.ImgUtils;
-import webviewer.util.ResUtils;
 
 public class WebViewer {
 
-    private static final Logger LOG = Logger.getLogger(WebViewer.class.getName());
+    private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
     public static void main(String[] args) {
-        ResUtils.extractLibs();
+        OpenCV.loadLocally();
 
         WebCam cam = WebCam.getInstance();
 

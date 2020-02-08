@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
 }
+mainClassName = 'webviewer.WebViewer'
 
 repositories {
     jcenter()
