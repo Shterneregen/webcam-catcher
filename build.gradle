@@ -2,21 +2,23 @@ plugins {
     id 'java'
     id 'application'
 }
-mainClassName = 'webviewer.WebViewer'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 
 dependencies {
-    compile group: 'org.openpnp', name: 'opencv', version: '3.2.0-0'
+    implementation(
+            "org.openpnp:opencv:3.4.2-1"
+    )
+}
+
+application {
+    mainClassName = 'WebViewer.App'
 }
 
 jar {
-    baseName = 'WebViewer'
+    archiveFileName = 'WebViewer.jar'
     manifest {
         attributes(
                 'Class-Path': configurations.compileClasspath.files.collect { "$it.name" }.join(' '),
