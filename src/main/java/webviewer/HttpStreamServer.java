@@ -5,9 +5,9 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import webviewer.util.ResUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -24,16 +24,41 @@ public class HttpStreamServer implements Runnable {
     private Socket socket;
     private Mat frame;
     private int port;
+    private boolean stopped = false;
 
     public HttpStreamServer(Mat frame) {
         this.frame = frame;
         this.port = Integer.parseInt(ResUtils.getProperty("stream.port"));
     }
 
-    private void startStreamingServer() throws IOException {
+    public void run() {
+        try (OutputStream outputStream = startStreamingServer()) {
+            LOG.log(Level.INFO, "Go to  http://localhost:{0} with browser", Integer.toString(port));
+            while (!stopped) {
+                writeImageToStream(frame, outputStream);
+            }
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
+    }
+
+    private OutputStream startStreamingServer() throws IOException {
         serverSocket = new ServerSocket(port);
         socket = serverSocket.accept();
         writeHeader(socket.getOutputStream(), boundary);
+        return socket.getOutputStream();
+    }
+
+    public void writeImageToStream(Mat frame, OutputStream outputStream) throws IOException {
+        if (frame == null) {
+            return;
+        }
+        try {
+            writeImageBytesToStream(outputStream, getImageBytes(frame));
+        } catch (Exception ex) {
+            socket = serverSocket.accept();
+            writeHeader(socket.getOutputStream(), boundary);
+        }
     }
 
     private void writeHeader(OutputStream stream, String boundary) throws IOException {
@@ -49,54 +74,47 @@ public class HttpStreamServer implements Runnable {
                 + "--" + boundary + "\r\n").getBytes());
     }
 
-    public void pushImage(Mat frame) throws IOException {
-        if (frame == null) {
-            return;
-        }
-        try {
-            OutputStream outputStream = socket.getOutputStream();
-            BufferedImage img = mat2bufferedImage(frame);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(img, "jpg", baos);
-            byte[] imageBytes = baos.toByteArray();
-            outputStream.write(("Content-type: image/jpeg\r\n"
-                    + "Content-Length: " + imageBytes.length + "\r\n"
-                    + "\r\n").getBytes());
-            outputStream.write(imageBytes);
-            outputStream.write(("\r\n--" + boundary + "\r\n").getBytes());
-        } catch (Exception ex) {
-            socket = serverSocket.accept();
-            writeHeader(socket.getOutputStream(), boundary);
-        }
+    private void writeImageBytesToStream(OutputStream outputStream, byte[] imageBytes) throws IOException {
+        String headers = getHeaders(imageBytes.length);
+        outputStream.write(headers.getBytes());
+        outputStream.write(imageBytes);
+        outputStream.write(("\r\n--" + boundary + "\r\n").getBytes());
     }
 
-    public void run() {
-        try {
-            LOG.log(Level.INFO, "Go to  http://localhost:{0} with browser", Integer.toString(port));
-            startStreamingServer();
-            while (true) {
-                pushImage(frame);
-            }
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, e.getMessage(), e);
-        }
-
+    private String getHeaders(int length) {
+        return "Content-type: image/jpeg\r\n"
+                + "Content-Length: " + length + "\r\n"
+                + "\r\n";
     }
 
-    public void stopStreamingServer() throws IOException {
-        socket.close();
-        serverSocket.close();
-    }
-
-    private static BufferedImage mat2bufferedImage(Mat image) throws IOException {
-        MatOfByte bytemat = new MatOfByte();
-        Imgcodecs.imencode(".jpg", image, bytemat);
-        byte[] bytes = bytemat.toArray();
-        InputStream in = new ByteArrayInputStream(bytes);
-        return ImageIO.read(in);
+    private static byte[] getImageBytes(Mat image) {
+        MatOfByte matOfByte = new MatOfByte();
+        Imgcodecs.imencode(".jpg", image, matOfByte);
+        return matOfByte.toArray();
     }
 
     public void setFrame(Mat frame) {
         this.frame = frame;
+    }
+
+    public void stopStreamingServer() {
+        stopStreaming();
+        close(socket);
+        close(serverSocket);
+    }
+
+    public void stopStreaming() {
+        stopped = true;
+    }
+
+    private void close(Closeable closeable) {
+        if (closeable == null) {
+            return;
+        }
+        try {
+            closeable.close();
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 }
