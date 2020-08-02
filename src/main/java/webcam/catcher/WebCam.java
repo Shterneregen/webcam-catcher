@@ -1,4 +1,4 @@
-package webviewer;
+package webcam.catcher;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -6,8 +6,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
-import webviewer.util.ImgUtils;
-import webviewer.util.ResUtils;
+import webcam.catcher.util.ImgUtils;
+import webcam.catcher.util.ResUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

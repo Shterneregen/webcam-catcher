@@ -1,9 +1,9 @@
-package webviewer;
+package webcam.catcher;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
-import webviewer.util.ResUtils;
+import webcam.catcher.util.ResUtils;
 
 import java.io.Closeable;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package webviewer.util;
+package webcam.catcher.util;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,8 +1,8 @@
-package webviewer;
+package webcam.catcher;
 
 import nu.pattern.OpenCV;
-import webviewer.util.ImgUtils;
-import webviewer.util.ResUtils;
+import webcam.catcher.util.ImgUtils;
+import webcam.catcher.util.ResUtils;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class WebViewer {
+public class App {
 
     private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 

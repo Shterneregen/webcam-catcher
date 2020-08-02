@@ -1,4 +1,4 @@
-package webviewer;
+package webcam.catcher;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;

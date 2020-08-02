@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'application'
 }
-mainClassName = 'webviewer.WebViewer'
 
 repositories {
     jcenter()
@@ -17,12 +16,16 @@ dependencies {
     )
 }
 
+application {
+    mainClassName = "webcam.catcher.App"
+}
+
 jar {
-    archiveFileName = 'WebViewer.jar'
+    archiveFileName = 'wc.jar'
     manifest {
         attributes(
                 'Class-Path': configurations.compileClasspath.files.collect { "$it.name" }.join(' '),
-                'Main-Class': 'webviewer.WebViewer'
+                'Main-Class': 'webcam.catcher.App'
         )
     }
     from {

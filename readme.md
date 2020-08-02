@@ -1,19 +1,22 @@
-# WebViewer
+# Webcam Catcher
+
 Work with OpenCV
 
-* Display images from a webcam on JFrame
+This project can:
+
+* Stream from a webcam on JFrame
 ```
-java -jar WebViewer.jar
+java -jar wc.jar
 ```
-* Record video to file
+* Record video from webcam to file
 ```
-java -jar WebViewer.jar -r
+java -jar wc.jar -r
 ```
-* Saving photos from the camera
+* Take a photo from a webcam
 ```
-java -jar WebViewer.jar -cap
+java -jar wc.jar -cap
 ```
-* Streaming to localhost
+* Stream from a webcam to localhost
 ```
-java -jar WebViewer.jar -stream
+java -jar wc.jar -stream
 ```

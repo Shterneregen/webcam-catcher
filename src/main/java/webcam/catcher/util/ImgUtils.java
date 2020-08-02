@@ -1,12 +1,11 @@
-package webviewer.util;
+package webcam.catcher.util;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
+import org.opencv.core.Mat;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
-
-import org.opencv.core.Mat;
 
 public class ImgUtils {
 
@@ -23,7 +22,7 @@ public class ImgUtils {
     }
 
     /**
-     * Подгоняет изображение под размеры
+     * Resize image to window size
      *
      * @param img изображение
      * @param w   ширина
@@ -43,12 +42,12 @@ public class ImgUtils {
     }
 
     /**
-     * Масштабирует изображение при изменении размеров окна
+     * Scales the image when the window is resized
      *
-     * @param img исходное изображение
-     * @param w   ширина окна
-     * @param h   высота окна
-     * @return масштабированное изображение
+     * @param img original image
+     * @param w   window width
+     * @param h   window height
+     * @return scaled image
      */
     public static BufferedImage scale(BufferedImage img, int w, int h) {
         int type = BufferedImage.TYPE_INT_RGB;

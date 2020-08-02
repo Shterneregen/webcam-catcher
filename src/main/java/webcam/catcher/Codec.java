@@ -1,4 +1,4 @@
-package webviewer;
+package webcam.catcher;
 
 import org.opencv.videoio.VideoWriter;
 
