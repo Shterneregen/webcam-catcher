@@ -11,3 +11,4 @@ build
 test/*.properties
 /lib/
 /config.properties
+!gradle-wrapper.jar
