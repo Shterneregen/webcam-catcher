@@ -37,8 +37,8 @@ public class WebCam {
 
     private WebCam() {
         camera = new VideoCapture(0);
-        camera.set(Videoio.CV_CAP_PROP_FRAME_WIDTH, WIDTH);
-        camera.set(Videoio.CV_CAP_PROP_FRAME_HEIGHT, HEIGHT);
+        camera.set(Videoio.CAP_PROP_FRAME_WIDTH, WIDTH);
+        camera.set(Videoio.CAP_PROP_FRAME_HEIGHT, HEIGHT);
         LOG.log(Level.INFO, "WebCam is open: {0}", camera.isOpened());
     }
 

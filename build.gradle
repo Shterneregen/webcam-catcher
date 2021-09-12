@@ -4,15 +4,17 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 dependencies {
     implementation(
-            "org.openpnp:opencv:3.4.2-1"
+            "org.openpnp:opencv:$opencvVersion"
     )
 }
 
