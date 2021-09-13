@@ -19,7 +19,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "webcam.catcher.App"
+    getMainClass().set("webcam.catcher.App")
 }
 
 jar {
