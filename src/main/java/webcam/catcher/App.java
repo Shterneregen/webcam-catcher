@@ -1,7 +1,11 @@
 package webcam.catcher;
 
 import nu.pattern.OpenCV;
+import org.opencv.highgui.HighGui;
+import webcam.catcher.cam.WebCam;
+import webcam.catcher.cam.WebFrame;
 import webcam.catcher.util.ImgUtils;
+import webcam.catcher.util.PropUtils;
 import webcam.catcher.util.ResUtils;
 
 import javax.swing.*;
@@ -43,7 +47,7 @@ public class App {
     private static void recordVideo(String[] args, WebCam cam) {
         int sec = args.length > 1
                 ? Integer.parseInt(args[1])
-                : Integer.parseInt(ResUtils.getProperty("def.rec.seconds"));
+                : PropUtils.getDefaultRecSeconds();
         String filePath = args.length > 2
                 ? args[2]
                 : ResUtils.getCurrentDir() + String.format("%1$tY%1$tm%1$td_%1$tH%1$tM%1$tS_cam.avi", new Date());
@@ -66,11 +70,17 @@ public class App {
         while (true) {
             int width = webFrame.getWidth();
             int height = webFrame.getHeight();
-            BufferedImage image = cam.show();
-            if (width > 0 && height > 0 && image != null) {
-                webFrame.setCamLabelImage(new ImageIcon(ImgUtils.scale(image, width, height - 100)));
+            BufferedImage image = (BufferedImage) HighGui.toBufferedImage(cam.getImage());
+            if (width > 0 && height > 0) {
+                webFrame.setCamLabelImage(new ImageIcon(ImgUtils.scale(image, width, height)));
             }
         }
+
+//        HighGui.namedWindow("window");
+//        while (true) {
+//            HighGui.imshow("window", cam.getImage());
+//            HighGui.waitKey(100);
+//        }
     }
 
 }

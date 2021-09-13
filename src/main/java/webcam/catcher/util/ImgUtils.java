@@ -12,6 +12,7 @@ public class ImgUtils {
     private ImgUtils() {
     }
 
+    @Deprecated
     public static BufferedImage createBufferedImage(Mat mat) {
         BufferedImage image = new BufferedImage(mat.width(), mat.height(), BufferedImage.TYPE_3BYTE_BGR);
         WritableRaster raster = image.getRaster();
@@ -24,10 +25,10 @@ public class ImgUtils {
     /**
      * Resize image to window size
      *
-     * @param img изображение
-     * @param w   ширина
-     * @param h   высота
-     * @return изображение с измененными размерами
+     * @param img image
+     * @param w   width
+     * @param h   height
+     * @return resized image
      */
     public static BufferedImage change(BufferedImage img, int w, int h) {
         if (img == null) {

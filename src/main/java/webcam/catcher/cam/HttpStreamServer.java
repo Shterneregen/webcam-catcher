@@ -1,9 +1,9 @@
-package webcam.catcher;
+package webcam.catcher.cam;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
-import webcam.catcher.util.ResUtils;
+import webcam.catcher.util.PropUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -11,28 +11,34 @@ import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class HttpStreamServer implements Runnable {
+public class HttpStreamServer extends Thread {
 
     private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
-    private final String boundary = "stream";
+    private static final String COMMON_HEADERS = PropUtils.getCommonHeaders();
+    private static final String IMAGE_HEADERS = PropUtils.getImageHeaders();
+    private static final String IMAGE_BOUNDARY = PropUtils.getImageBoundary();
+    private static final String JPG_EXT = ".jpg";
 
+    private final int port;
     private ServerSocket serverSocket;
     private Socket socket;
     private Mat frame;
-    private int port;
     private boolean stopped = false;
 
     public HttpStreamServer(Mat frame) {
         this.frame = frame;
-        this.port = Integer.parseInt(ResUtils.getProperty("stream.port"));
+        this.port = PropUtils.getPort();
     }
 
+    @Override
     public void run() {
-        try (OutputStream outputStream = startStreamingServer()) {
+        try (OutputStream outputStream = getStreamingOutputStream()) {
             LOG.log(Level.INFO, "Go to  http://localhost:{0} with browser", Integer.toString(port));
             while (!stopped) {
                 writeImageToStream(frame, outputStream);
@@ -42,10 +48,10 @@ public class HttpStreamServer implements Runnable {
         }
     }
 
-    private OutputStream startStreamingServer() throws IOException {
+    private OutputStream getStreamingOutputStream() throws IOException {
         serverSocket = new ServerSocket(port);
         socket = serverSocket.accept();
-        writeHeader(socket.getOutputStream(), boundary);
+        writeHeader(socket.getOutputStream());
         return socket.getOutputStream();
     }
 
@@ -57,39 +63,24 @@ public class HttpStreamServer implements Runnable {
             writeImageBytesToStream(outputStream, getImageBytes(frame));
         } catch (Exception ex) {
             socket = serverSocket.accept();
-            writeHeader(socket.getOutputStream(), boundary);
+            writeHeader(socket.getOutputStream());
         }
     }
 
-    private void writeHeader(OutputStream stream, String boundary) throws IOException {
-        stream.write(("HTTP/1.0 200 OK\r\n"
-                + "Connection: close\r\n"
-                + "Max-Age: 0\r\n"
-                + "Expires: 0\r\n"
-                + "Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\r\n"
-                + "Pragma: no-cache\r\n"
-                + "Content-Type: multipart/x-mixed-replace; "
-                + "boundary=" + boundary + "\r\n"
-                + "\r\n"
-                + "--" + boundary + "\r\n").getBytes());
+    private void writeHeader(OutputStream outputStream) throws IOException {
+        outputStream.write(COMMON_HEADERS.getBytes(StandardCharsets.UTF_8));
     }
 
     private void writeImageBytesToStream(OutputStream outputStream, byte[] imageBytes) throws IOException {
-        String headers = getHeaders(imageBytes.length);
+        String headers = MessageFormat.format(IMAGE_HEADERS, imageBytes.length);
         outputStream.write(headers.getBytes());
         outputStream.write(imageBytes);
-        outputStream.write(("\r\n--" + boundary + "\r\n").getBytes());
-    }
-
-    private String getHeaders(int length) {
-        return "Content-type: image/jpeg\r\n"
-                + "Content-Length: " + length + "\r\n"
-                + "\r\n";
+        outputStream.write(IMAGE_BOUNDARY.getBytes());
     }
 
     private static byte[] getImageBytes(Mat image) {
         MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".jpg", image, matOfByte);
+        Imgcodecs.imencode(JPG_EXT, image, matOfByte);
         return matOfByte.toArray();
     }
 

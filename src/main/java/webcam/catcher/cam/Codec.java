@@ -1,4 +1,4 @@
-package webcam.catcher;
+package webcam.catcher.cam;
 
 import org.opencv.videoio.VideoWriter;
 

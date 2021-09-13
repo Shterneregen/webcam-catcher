@@ -11,13 +11,12 @@ import java.util.logging.Logger;
 public class ResUtils {
 
     private static final Logger LOG = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
-    private static final String S = System.getProperty("file.separator");
-    private static final String CONFIG_FILE_NAME = "config.properties";
+    private static final String CONFIG_FILE_NAME = "/config.properties";
 
     private static Properties properties;
 
     static {
-        try (InputStream source = ResUtils.class.getResourceAsStream("/" + CONFIG_FILE_NAME)) {
+        try (InputStream source = MethodHandles.lookup().lookupClass().getResourceAsStream(CONFIG_FILE_NAME)) {
             properties = new Properties();
             properties.load(source);
         } catch (Exception ex) {
@@ -31,7 +30,7 @@ public class ResUtils {
     public static String getCurrentDir() {
         File currentDir = new File(".");
         try {
-            return currentDir.getCanonicalPath() + S;
+            return currentDir.getCanonicalPath() + File.separator;
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, ex.getMessage(), ex);
             return "";

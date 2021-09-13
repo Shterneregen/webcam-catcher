@@ -1,4 +1,4 @@
-package webcam.catcher;
+package webcam.catcher.cam;
 
 import javax.swing.*;
 import java.awt.event.WindowEvent;
@@ -10,20 +10,20 @@ public class WebFrame extends JFrame {
     private static final int DEFAULT_HEIGHT = 1280;
 
     private JLabel camLabel;
-
     private WebCam cam;
 
-    WebFrame(WebCam cam) {
+    public WebFrame(WebCam cam) {
         this.cam = cam;
         camLabel = new JLabel();
-        this.add(camLabel);
+        setTitle("WCatch");
+        add(camLabel);
         addWindowListener(windowListener);
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-    private WindowListener windowListener = new WindowListener() {
+    private final WindowListener windowListener = new WindowListener() {
         public void windowActivated(WindowEvent event) {
         }
 

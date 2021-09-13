@@ -1,4 +1,4 @@
-package webcam.catcher;
+package webcam.catcher.cam;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -6,14 +6,11 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.VideoWriter;
 import org.opencv.videoio.Videoio;
-import webcam.catcher.util.ImgUtils;
-import webcam.catcher.util.ResUtils;
+import webcam.catcher.util.PropUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
 import java.lang.invoke.MethodHandles;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +23,7 @@ public class WebCam {
     private static final int WIDTH = 1280; // 1366 1280
     private static final int HEIGHT = 1280;
 
-    private VideoCapture camera;
+    private final VideoCapture camera;
 
     public static synchronized WebCam getInstance() {
         if (instance == null) {
@@ -39,7 +36,8 @@ public class WebCam {
         camera = new VideoCapture(0);
         camera.set(Videoio.CAP_PROP_FRAME_WIDTH, WIDTH);
         camera.set(Videoio.CAP_PROP_FRAME_HEIGHT, HEIGHT);
-        LOG.log(Level.INFO, "WebCam is open: {0}", camera.isOpened());
+        LOG.log(Level.INFO, "Camera {0} is open: {1}",
+                new Object[]{camera.getBackendName(), camera.isOpened()});
     }
 
     public void setStop() {
@@ -51,7 +49,7 @@ public class WebCam {
                 (int) camera.get(Videoio.CAP_PROP_FRAME_WIDTH),
                 (int) camera.get(Videoio.CAP_PROP_FRAME_HEIGHT)
         );
-        int fps = Integer.parseInt(ResUtils.getProperty("fps"));
+        int fps = PropUtils.getFps();
         LOG.log(Level.INFO, "fps: {0}", fps);
         return new VideoWriter(
                 filePath,
@@ -62,7 +60,7 @@ public class WebCam {
         );
     }
 
-    private Mat getImage() {
+    public Mat getImage() {
         if (!camera.isOpened()) {
             LOG.info("Camera is not open!");
         } else {
@@ -99,15 +97,6 @@ public class WebCam {
         }
     }
 
-    public BufferedImage show() {
-        try {
-            Mat frame = this.getImage();
-            return ImgUtils.createBufferedImage(Objects.requireNonNull(frame));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public void photograph(String path) {
         Mat mat = null;
         try {
@@ -138,14 +127,14 @@ public class WebCam {
         }
 
         Mat frame = new Mat();
-        HttpStreamServer httpStreamService = new HttpStreamServer(frame);
-        new Thread(httpStreamService).start();
+        HttpStreamServer httpStreamServer = new HttpStreamServer(frame);
+        httpStreamServer.start();
 
         tmrVideoProcess = new Timer(100, (ActionEvent e) -> {
             if (!camera.read(frame)) {
                 tmrVideoProcess.stop();
             }
-            httpStreamService.setFrame(frame);
+            httpStreamServer.setFrame(frame);
         });
         tmrVideoProcess.start();
     }
