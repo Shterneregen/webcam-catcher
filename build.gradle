@@ -14,7 +14,8 @@ compileJava {
 
 dependencies {
     implementation(
-            "org.openpnp:opencv:$opencvVersion"
+            "org.openpnp:opencv:$opencvVersion",
+            "commons-cli:commons-cli:$commonsCliVersion"
     )
 }
 
